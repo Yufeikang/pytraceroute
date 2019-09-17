@@ -10,7 +10,7 @@ feature-rich as is `traceroute(8)` for example.
 Requirements
 ============
 
-* Python 2.7.x or 3.x
+* Python 3.x
 * docopt
 
 Installation
@@ -23,11 +23,11 @@ Clone the Git repository and install:
    $ git clone https://github.com/pytraceroute
    $ cd pytraceroute && python setup.py install
 
-Or via `pip`:
+Or via `pip3`:
 
 .. code-block:: bash
 
-   $ pip install pytraceroute
+   $ pip3 install pytraceroute
 
 Usage
 =====

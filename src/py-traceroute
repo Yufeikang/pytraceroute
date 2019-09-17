@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Copyright (c) 2015 Marin Atanasov Nikolov <dnaeon@gmail.com>
 # All rights reserved.
@@ -36,8 +36,8 @@ from traceroute.core import Tracer
 
 
 def main():
-    usage="""
-Usage: py-traceroute [-m <hops>] <destination>
+    usage = """
+Usage: py-traceroute [-m <hops>] [-l <lang>] <destination>
        py-traceroute --help
        py-traceroute --version
 
@@ -47,6 +47,8 @@ Arguments:
 Options:
   -m <hops>, --max-hops <hops>  Max number of hops to probe
                                 [default: 30]
+  -l <lang>, --lang <lang>  Display Lang
+                                [default: en-US]
   -h, --help                    Display this usage info
   -v, --version                 Display version and exit
 """
@@ -54,10 +56,12 @@ Options:
     args = docopt(usage, version=__version__)
     tracer = Tracer(
         dst=args['<destination>'],
-        hops=int(args['--max-hops'])
+        hops=int(args['--max-hops']),
+        lang=args['--lang'],
     )
 
     tracer.run()
+
 
 if __name__ == '__main__':
     main()

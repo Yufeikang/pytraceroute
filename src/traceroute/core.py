@@ -31,12 +31,19 @@ import socket
 import random
 import struct
 import time
+import locale
+import json
+import re
+from urllib import request
+
+
+current_lang = locale.getdefaultlocale()[0]
 
 __all__ = ['Tracer']
 
 
 class Tracer(object):
-    def __init__(self, dst, hops=30):
+    def __init__(self, dst, hops=30, lang=None):
         """
         Initializes a new tracer object
 
@@ -48,9 +55,22 @@ class Tracer(object):
         self.dst = dst
         self.hops = hops
         self.ttl = 1
+        if lang:
+            self.lang = lang
+        else:
+            self.lang = current_lang
 
         # Pick up a random port in the range 33434-33534
         self.port = random.choice(range(33434, 33535))
+
+    def get_ip_detail(self, ip):
+        if re.match('^1(((0|27)(.(([1-9]?|1[0-9])[0-9]|2([0-4][0-9]|5[0-5])))|(72.(1[6-9]|2[0-9]|3[01])|92.168))(.(([1-9]?|1[0-9])[0-9]|2([0-4][0-9]|5[0-5]))){2})$', ip):
+            return "    Private({})".format(ip)
+        res = request.urlopen("http://ip-api.com/json/{}?lang={}".format(ip, self.lang))
+        data = json.loads(res.read())
+        if data['status'] == 'success':
+            return "{} {} {}({})".format(data['country'], data['regionName'], data['as'], ip)
+        return "    Reserved " + ip
 
     def run(self):
         """
@@ -92,7 +112,8 @@ class Tracer(object):
 
             if addr:
                 timeCost = round((entTimer - startTimer) * 1000, 2)
-                print('{:<4} {} {} ms'.format(self.ttl, addr[0]), timeCost)
+                ip_detail = self.get_ip_detail(addr[0])
+                print('{:<4} {} {} ms'.format(self.ttl, ip_detail, timeCost))
                 if addr[0] == dst_ip:
                     break
             else:
